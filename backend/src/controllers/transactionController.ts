@@ -182,10 +182,11 @@ export const transferFund = async (req: AuthRequest, res: Response): Promise<voi
     });
 
     // Notify Receiver
+    const senderName = (senderAccount.userId as any)?.name || "PrimeBank Account";
     await Notification.create({
       userId: receiverAccount.userId._id,
       title: "Funds Received",
-      message: `You received $${transferAmount.toLocaleString()} from ${senderAccount.userId.name || "PrimeBank Account"}. Current balance: $${receiverAccount.balance.toLocaleString()}.`,
+      message: `You received $${transferAmount.toLocaleString()} from ${senderName}. Current balance: $${receiverAccount.balance.toLocaleString()}.`,
       type: "transaction",
     });
 

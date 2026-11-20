@@ -1,0 +1,179 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { jsPDF } from "jspdf";
+import { Transaction } from "@/types";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function formatCurrency(amount: number | undefined | null, currency: string = "USD"): string {
+  if (amount === undefined || amount === null || isNaN(amount)) return "$0.00";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency || "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+export function formatDate(dateString: string | undefined | null): string {
+  if (!dateString) return "N/A";
+  try {
+    const d = new Date(dateString);
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return dateString;
+  }
+}
+
+export function exportTransactionsToCSV(transactions: Transaction[], filename: string = "statement.csv") {
+  const headers = [
+    "Transaction ID",
+    "Date",
+    "Type",
+    "Amount",
+    "Fee",
+    "Status",
+    "Sender Account",
+    "Receiver Account",
+    "Description",
+    "Reference",
+  ];
+
+  const rows = transactions.map((t) => [
+    t.transactionId,
+    new Date(t.createdAt).toISOString(),
+    t.type.toUpperCase(),
+    t.amount,
+    t.fee,
+    t.status.toUpperCase(),
+    t.senderAccountNumber || "N/A",
+    t.receiverAccountNumber || "N/A",
+    `"${(t.description || "").replace(/"/g, '""')}"`,
+    t.reference || "N/A",
+  ]);
+
+  const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+export function generateReceiptPDF(txn: Transaction) {
+  const doc = new jsPDF();
+
+  // Primary Header / Branding
+  doc.setFillColor(12, 61, 111); // Navy Blue
+  doc.rect(0, 0, 210, 40, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("PRIMEBANK DIGITAL", 20, 22);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Official Financial Transaction Receipt", 20, 30);
+
+  // Status Badge box
+  doc.setFillColor(240, 247, 255);
+  doc.roundedRect(145, 12, 50, 18, 3, 3, "F");
+  doc.setTextColor(12, 61, 111);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text(txn.status.toUpperCase(), 158, 24);
+
+  // Reset text color
+  doc.setTextColor(30, 41, 59);
+
+  // Transaction Summary Box
+  doc.setFontSize(14);
+  doc.text("TRANSACTION DETAILS", 20, 55);
+
+  doc.setDrawColor(226, 232, 240);
+  doc.line(20, 58, 190, 58);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100, 116, 139);
+
+  const leftCol = 20;
+  const rightCol = 90;
+  let y = 68;
+
+  const items = [
+    { label: "Transaction ID:", value: txn.transactionId },
+    { label: "Transaction Date:", value: formatDate(txn.createdAt) },
+    { label: "Transaction Type:", value: txn.type.toUpperCase() },
+    { label: "Reference Code:", value: txn.reference || "N/A" },
+    { label: "Sender Account:", value: txn.senderAccountNumber || "Counter / Cash Deposit" },
+    { label: "Receiver Account:", value: txn.receiverAccountNumber || "N/A" },
+    { label: "Description:", value: txn.description || "Digital Banking Transfer" },
+  ];
+
+  items.forEach((item) => {
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 116, 139);
+    doc.text(item.label, leftCol, y);
+
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(15, 23, 42);
+    doc.text(String(item.value), rightCol, y);
+
+    y += 9;
+  });
+
+  // Amount Details Box
+  y += 5;
+  doc.setFillColor(248, 250, 252);
+  doc.roundedRect(20, y, 170, 32, 3, 3, "F");
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100, 116, 139);
+  doc.text("Transfer Amount:", 30, y + 12);
+  doc.text("Transaction Fee:", 30, y + 22);
+
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(15, 23, 42);
+  doc.text(formatCurrency(txn.amount), 140, y + 12);
+  doc.text(formatCurrency(txn.fee), 140, y + 22);
+
+  y += 42;
+  doc.setFontSize(12);
+  doc.setTextColor(12, 61, 111);
+  doc.text("Total Settlement:", 30, y);
+  doc.setFontSize(14);
+  doc.text(formatCurrency(txn.amount + (txn.fee || 0)), 140, y);
+
+  // Security Seal & Legal Footer
+  doc.setDrawColor(203, 213, 225);
+  doc.line(20, 240, 190, 240);
+
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(148, 163, 184);
+  doc.text(
+    "This document is an electronic confirmation generated by PrimeBank Core Banking System.",
+    20,
+    248
+  );
+  doc.text(
+    "PrimeBank is a licensed financial institution. For questions, contact support@primebank.com.",
+    20,
+    254
+  );
+
+  doc.save(`PrimeBank-Receipt-${txn.transactionId}.pdf`);
+}
