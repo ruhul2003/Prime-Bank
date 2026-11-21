@@ -1,25 +1,23 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+﻿import { Schema, model, Document } from 'mongoose';
 
 export interface IAuditLog extends Document {
   action: string;
-  performedBy: Types.ObjectId;
-  targetType: string;
+  performedBy: Schema.Types.ObjectId;
   targetId?: string;
-  details: Record<string, any>;
+  details?: string;
   ipAddress?: string;
   createdAt: Date;
 }
 
-const AuditLogSchema = new Schema<IAuditLog>(
+const auditLogSchema = new Schema<IAuditLog>(
   {
     action: { type: String, required: true },
-    performedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    targetType: { type: String, required: true },
-    targetId: { type: String, default: "" },
-    details: { type: Schema.Types.Mixed, default: {} },
-    ipAddress: { type: String, default: "" },
+    performedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    targetId: { type: String },
+    details: { type: String },
+    ipAddress: { type: String },
   },
-  { timestamps: true }
+  { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-export const AuditLog = mongoose.model<IAuditLog>("AuditLog", AuditLogSchema);
+export const AuditLog = model<IAuditLog>('AuditLog', auditLogSchema);
