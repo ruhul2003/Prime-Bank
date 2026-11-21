@@ -1,4 +1,4 @@
-# 🏛️ PrimeBank - Advanced Digital Banking & Treasury Management System
+﻿# 🏛️ PrimeBank - Advanced Digital Banking & Treasury Management System
 
 PrimeBank is an enterprise-grade digital banking management platform engineered using **Next.js (App Router)**, **TypeScript**, **Redux Toolkit**, **RTK Query**, **Node.js**, **Express**, and **MongoDB**. 
 
@@ -302,3 +302,18 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ---
 
 © 2025 PrimeBank Digital. Advanced Digital Banking Management System Assessment.
+
+---
+
+## 🛠️ Extended Architecture & Security Specifications
+
+### Enterprise Security Safeguards
+- **Atomic Balance Updates:** Implemented transactional guarantees to prevent race conditions during transfers.
+- **PIN Verification Protocol:** 4-6 digit transaction PIN required for fund transfers and withdrawals.
+- **Audit Logging System:** Persistent administrative event logs track authorization actions across bank staff and admins.
+- **Rate-Limiting & Protection:** Built-in safeguards protect sensitive financial routes from brute-force vectors.
+- **Client-Side Validation & Type Safety:** Comprehensive TypeScript definitions and Redux RTK Query synchronization.
+
+### Clean Code Practices
+- Modular folder structure separating business logic, state slices, controllers, and presentational elements.
+- Reusable UI kit components (StatCard, StatusBadge, ConfirmDialog, EmptyState, LoadingSpinner).
