@@ -1,65 +1,38 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+﻿import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface UIState {
-  theme: "light" | "dark";
-  sidebarOpen: boolean;
-  notificationDrawerOpen: boolean;
+interface UiState {
+  isSidebarOpen: boolean;
+  activeModal: string | null;
+  notificationCount: number;
 }
 
-const initialState: UIState = {
-  theme: "light",
-  sidebarOpen: true,
-  notificationDrawerOpen: false,
+const initialState: UiState = {
+  isSidebarOpen: true,
+  activeModal: null,
+  notificationCount: 0,
 };
 
 export const uiSlice = createSlice({
-  name: "ui",
+  name: 'ui',
   initialState,
   reducers: {
-    toggleTheme: (state) => {
-      state.theme = state.theme === "light" ? "dark" : "light";
-      if (typeof window !== "undefined") {
-        localStorage.setItem("primebank_theme", state.theme);
-        if (state.theme === "dark") {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      }
-    },
-    setTheme: (state, action: PayloadAction<"light" | "dark">) => {
-      state.theme = action.payload;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("primebank_theme", action.payload);
-        if (action.payload === "dark") {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      }
-    },
     toggleSidebar: (state) => {
-      state.sidebarOpen = !state.sidebarOpen;
+      state.isSidebarOpen = !state.isSidebarOpen;
     },
     setSidebarOpen: (state, action: PayloadAction<boolean>) => {
-      state.sidebarOpen = action.payload;
+      state.isSidebarOpen = action.payload;
     },
-    toggleNotificationDrawer: (state) => {
-      state.notificationDrawerOpen = !state.notificationDrawerOpen;
+    openModal: (state, action: PayloadAction<string>) => {
+      state.activeModal = action.payload;
     },
-    setNotificationDrawerOpen: (state, action: PayloadAction<boolean>) => {
-      state.notificationDrawerOpen = action.payload;
+    closeModal: (state) => {
+      state.activeModal = null;
+    },
+    setNotificationCount: (state, action: PayloadAction<number>) => {
+      state.notificationCount = action.payload;
     },
   },
 });
 
-export const {
-  toggleTheme,
-  setTheme,
-  toggleSidebar,
-  setSidebarOpen,
-  toggleNotificationDrawer,
-  setNotificationDrawerOpen,
-} = uiSlice.actions;
-
+export const { toggleSidebar, setSidebarOpen, openModal, closeModal, setNotificationCount } = uiSlice.actions;
 export default uiSlice.reducer;
