@@ -29,7 +29,7 @@ export const Badge: React.FC<BadgeProps> = ({
       "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800",
     danger:
       "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800",
-    info: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800",
+    info: "bg-brand-50 text-brand-600 border border-brand-200 dark:bg-brand-950/40 dark:text-brand-300 dark:border-brand-800",
     secondary:
       "bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-800",
     outline:

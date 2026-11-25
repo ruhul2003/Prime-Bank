@@ -96,7 +96,7 @@ export default function DepositWithdrawPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Request Form */}
-        <div className="lg:col-span-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+        <div className="lg:col-span-1 glass-surface rounded-3xl p-6">
           {/* Toggle Type Buttons */}
           <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 mb-6">
             <button
@@ -175,10 +175,10 @@ export default function DepositWithdrawPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full mt-2 py-3 px-4 rounded-xl font-bold text-sm text-white shadow-md transition flex items-center justify-center gap-2 ${
+              className={`w-full mt-2 py-3 px-4 rounded-full font-bold text-sm text-white shadow-md transition flex items-center justify-center gap-2 ${
                 requestType === "deposit"
                   ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20"
-                  : "bg-brand-600 hover:bg-brand-700 shadow-brand-600/20"
+                  : "btn-azure"
               }`}
             >
               {isLoading ? (
@@ -193,7 +193,7 @@ export default function DepositWithdrawPage() {
         </div>
 
         {/* Requests Activity History Table */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm overflow-hidden">
+        <div className="lg:col-span-2 glass-surface rounded-3xl p-6 overflow-hidden">
           <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white">

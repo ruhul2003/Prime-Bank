@@ -20,13 +20,30 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to Database
-connectDB();
+// Connect to Database (eagerly on local startup; awaited per request for serverless)
+if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
+  connectDB();
+}
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  ...(process.env.FRONTEND_URL || "")
+    .split(",")
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
+    .filter(Boolean),
+];
 
 // Middlewares
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", process.env.FRONTEND_URL || ""],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -37,6 +54,16 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV !== "test") {
   app.use(morgan("dev"));
 }
+
+// Ensure MongoDB connection is ready for serverless requests
+app.use("/api", async (_req, _res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Health check
 app.get("/health", (req: Request, res: Response) => {
@@ -69,8 +96,8 @@ app.use((req: Request, res: Response) => {
 // Centralized Error Middleware
 app.use(errorHandler);
 
-// Start Server
-if (process.env.NODE_ENV !== "test") {
+// Start Server (local / non-serverless)
+if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
     console.log(`[PrimeBank Core] Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode.`);
   });

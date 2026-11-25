@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 interface BadgeProps {
   status: string;
@@ -31,7 +31,7 @@ export const StatusBadge: React.FC<BadgeProps> = ({ status, className = '' }) =>
 
   return (
     <span
-      className={inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border  }
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStyle()} ${className}`}
     >
       {status}
     </span>

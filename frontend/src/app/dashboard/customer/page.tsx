@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { formatCurrency, formatDate, exportTransactionsToCSV } from "@/lib/utils";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function CustomerDashboardPage() {
   const dispatch = useAppDispatch();
@@ -80,9 +81,9 @@ export default function CustomerDashboardPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => exportTransactionsToCSV(recentTransactions, "PrimeBank-Account-Statement.csv")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#DCECFB] dark:border-slate-800 bg-white/90 dark:bg-slate-900 hover:bg-brand-50/70 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition shadow-sm"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-brand-500" />
             <span>Export Statement (CSV)</span>
           </button>
         </div>
@@ -90,36 +91,42 @@ export default function CustomerDashboardPage() {
 
       {/* Main Account Card Banner & Quick Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Fintech Virtual Platinum Card */}
-        <div className="lg:col-span-1 rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-brand-900 via-navy-900 to-slate-950 text-white shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+        {/* Fintech Virtual Azure Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          whileHover={{ y: -4 }}
+          className="lg:col-span-1 rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-[#2fa3ff] via-[#0d7ef5] to-[#0446a3] text-white shadow-[0_24px_48px_-10px_rgba(6,96,207,0.52)] transition-shadow duration-300 border border-white/30 relative overflow-hidden flex flex-col justify-between min-h-[220px]"
+        >
           {/* Card subtle background patterns */}
-          <div className="absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-brand-500/10 blur-2xl pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 w-52 h-52 rounded-full bg-white/20 blur-2xl pointer-events-none" />
           <div className="absolute right-6 top-6 opacity-20">
             <Building2 className="w-16 h-16" />
           </div>
 
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-brand-300">
-                PrimeBank Platinum
+              <span className="text-[11px] font-bold uppercase tracking-widest text-white/90">
+                PrimeBank Azure
               </span>
-              <Badge variant="success" size="sm">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-sm text-white border border-white/30">
                 {activeAcc?.status || "ACTIVE"}
-              </Badge>
+              </span>
             </div>
-            <p className="text-xs text-slate-300 mt-1 capitalize">
+            <p className="text-xs text-white/80 mt-1 capitalize">
               {activeAcc?.accountType || "Savings"} Account
             </p>
           </div>
 
           <div className="my-4">
-            <span className="text-xs text-slate-400">Available Balance</span>
+            <span className="text-xs text-white/80">Available Balance</span>
             <div className="text-3xl font-extrabold tracking-tight mt-0.5 font-mono">
               {formatCurrency(activeAcc?.balance)}
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs font-mono text-slate-300">
+          <div className="flex items-center justify-between pt-2 border-t border-white/20 text-xs font-mono text-white/90">
             <div className="flex items-center gap-1.5">
               <span>{activeAcc?.accountNumber || "401000000001"}</span>
               <button
@@ -130,13 +137,13 @@ export default function CustomerDashboardPage() {
                 <Copy className="w-3.5 h-3.5" />
               </button>
             </div>
-            <span className="text-[11px] uppercase tracking-wider text-slate-400">USD</span>
+            <span className="text-[11px] uppercase tracking-wider text-white/80">USD</span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Financial Metrics Cards */}
         <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-5 rounded-3xl glass-surface flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400 mb-2">
               <span className="text-xs font-bold uppercase tracking-wider">Total Portfolio</span>
               <CreditCard className="w-4 h-4 text-brand-500" />
@@ -147,7 +154,7 @@ export default function CustomerDashboardPage() {
             <p className="text-[11px] text-slate-400 mt-1">{summary.accountsCount} accounts active</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-5 rounded-3xl glass-surface flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400 mb-2">
               <span className="text-xs font-bold uppercase tracking-wider">Total Inflow</span>
               <ArrowDownLeft className="w-4 h-4 text-emerald-500" />
@@ -158,7 +165,7 @@ export default function CustomerDashboardPage() {
             <p className="text-[11px] text-slate-400 mt-1">Deposits & credited funds</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="p-5 rounded-3xl glass-surface flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400 mb-2">
               <span className="text-xs font-bold uppercase tracking-wider">Total Outflow</span>
               <ArrowUpRight className="w-4 h-4 text-brand-500" />
@@ -169,7 +176,7 @@ export default function CustomerDashboardPage() {
             <p className="text-[11px] text-slate-400 mt-1">Transfers & withdrawals</p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between col-span-2 sm:col-span-3">
+          <div className="p-5 rounded-3xl glass-surface flex flex-col justify-between col-span-2 sm:col-span-3">
             <div className="flex items-center justify-between text-slate-400 mb-1">
               <span className="text-xs font-bold uppercase tracking-wider">
                 Daily Transfer Ceiling Usage
@@ -178,9 +185,9 @@ export default function CustomerDashboardPage() {
                 Limit: {formatCurrency(activeAcc?.dailyTransferLimit || 10000)}
               </span>
             </div>
-            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 my-2 overflow-hidden">
+            <div className="w-full bg-brand-50 dark:bg-slate-800 rounded-full h-2.5 my-2 overflow-hidden">
               <div
-                className="bg-brand-500 h-2.5 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-brand-400 to-brand-600 h-2.5 rounded-full transition-all duration-500"
                 style={{ width: "24%" }}
               />
             </div>
@@ -196,9 +203,9 @@ export default function CustomerDashboardPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Link
           href="/dashboard/customer/transfer"
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 hover:shadow-md transition group flex items-center gap-3"
+          className="p-4 rounded-3xl glass-surface hover:border-brand-400 transition group flex items-center gap-3"
         >
-          <div className="p-3 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 group-hover:bg-brand-600 group-hover:text-white transition">
+          <div className="p-3 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-500 dark:text-brand-400 group-hover:bg-brand-500 group-hover:text-white transition">
             <ArrowRightLeft className="w-5 h-5" />
           </div>
           <div>
@@ -209,9 +216,9 @@ export default function CustomerDashboardPage() {
 
         <Link
           href="/dashboard/customer/deposit-withdraw"
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:shadow-md transition group flex items-center gap-3"
+          className="p-4 rounded-3xl glass-surface hover:border-emerald-400 transition group flex items-center gap-3"
         >
-          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition">
+          <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition">
             <DollarSign className="w-5 h-5" />
           </div>
           <div>
@@ -222,9 +229,9 @@ export default function CustomerDashboardPage() {
 
         <Link
           href="/dashboard/customer/loans"
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:shadow-md transition group flex items-center gap-3"
+          className="p-4 rounded-3xl glass-surface hover:border-brand-400 transition group flex items-center gap-3"
         >
-          <div className="p-3 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition">
+          <div className="p-3 rounded-2xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 group-hover:bg-brand-500 group-hover:text-white transition">
             <FileText className="w-5 h-5" />
           </div>
           <div>
@@ -235,9 +242,9 @@ export default function CustomerDashboardPage() {
 
         <Link
           href="/dashboard/customer/accounts"
-          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500 hover:shadow-md transition group flex items-center gap-3"
+          className="p-4 rounded-3xl glass-surface hover:border-slate-400 transition group flex items-center gap-3"
         >
-          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white transition">
+          <div className="p-3 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white group-hover:bg-brand-500 transition">
             <CreditCard className="w-5 h-5" />
           </div>
           <div>
@@ -251,8 +258,8 @@ export default function CustomerDashboardPage() {
       {analyticsData && <CustomerCharts analytics={analyticsData} />}
 
       {/* Recent Transactions List with Click-to-Receipt */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+      <div className="glass-panel rounded-3xl overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-[#E5F1FD] dark:border-slate-800 flex items-center justify-between">
           <div>
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Recent Account Activity

@@ -20,7 +20,7 @@ interface CustomerChartsProps {
   analytics: CustomerAnalytics;
 }
 
-const COLORS = ["#0c87eb", "#10b981", "#ef4444", "#f59e0b", "#8b5cf6"];
+const COLORS = ["#0d7ef5", "#10b981", "#ef4444", "#2fa3ff", "#0660cf"];
 
 export const CustomerCharts: React.FC<CustomerChartsProps> = ({ analytics }) => {
   const { monthlyActivity = [], transactionDistribution = [] } = analytics;
@@ -28,7 +28,7 @@ export const CustomerCharts: React.FC<CustomerChartsProps> = ({ analytics }) => 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Monthly Inflow & Spending */}
-      <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="lg:col-span-2 glass-surface p-6 rounded-3xl">
         <div className="mb-4">
           <h3 className="font-bold text-base text-slate-900 dark:text-white">
             Monthly Inflow vs Outflow
@@ -62,14 +62,14 @@ export const CustomerCharts: React.FC<CustomerChartsProps> = ({ analytics }) => 
               />
               <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
               <Bar dataKey="deposit" name="Income / Inflow" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="spending" name="Spending / Outflow" fill="#0c87eb" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="spending" name="Spending / Outflow" fill="#0d7ef5" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Transaction Type Breakdown */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="glass-surface p-6 rounded-3xl">
         <div className="mb-4">
           <h3 className="font-bold text-base text-slate-900 dark:text-white">
             Transaction Activity

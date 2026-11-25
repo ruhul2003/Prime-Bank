@@ -1,4 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
+
+export const asyncHandler =
+  <T extends Request = Request>(
+    fn: (req: T, res: Response, next: NextFunction) => Promise<unknown> | unknown
+  ): RequestHandler =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    Promise.resolve(fn(req as T, res, next)).catch(next);
+  };
 
 export class AppError extends Error {
   statusCode: number;

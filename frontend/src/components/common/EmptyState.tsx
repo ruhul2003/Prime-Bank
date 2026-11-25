@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { LucideIcon } from 'lucide-react';
 
 interface EmptyStateProps {
@@ -17,16 +17,16 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
 }) => {
   return (
-    <div className=\"flex flex-col items-center justify-center p-12 text-center border border-dashed border-slate-800 rounded-2xl bg-slate-900/40\">
-      <div className=\"p-4 rounded-2xl bg-slate-800/80 text-slate-400 mb-4 border border-slate-700/60\">
-        <Icon className=\"w-8 h-8\" />
+    <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-slate-800 rounded-2xl bg-slate-900/40">
+      <div className="p-4 rounded-2xl bg-slate-800/80 text-slate-400 mb-4 border border-slate-700/60">
+        <Icon className="w-8 h-8" />
       </div>
-      <h3 className=\"text-lg font-semibold text-white\">{title}</h3>
-      <p className=\"text-sm text-slate-400 max-w-sm mt-1 mb-6\">{description}</p>
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <p className="text-sm text-slate-400 max-w-sm mt-1 mb-6">{description}</p>
       {actionText && onAction && (
         <button
           onClick={onAction}
-          className=\"px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium text-sm rounded-xl transition-all shadow-lg\"
+          className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-xl transition-all shadow-lg"
         >
           {actionText}
         </button>

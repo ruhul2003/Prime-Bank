@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
@@ -11,7 +11,7 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
     const duration = Date.now() - start;
     const { method, originalUrl } = req;
     const { statusCode } = res;
-    console.log([] []    - ms);
+    console.log(`[${requestId}] [${method}] ${originalUrl} ${statusCode} - ${duration}ms`);
   });
 
   next();

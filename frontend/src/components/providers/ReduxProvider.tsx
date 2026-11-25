@@ -6,18 +6,16 @@ import { useEffect } from "react";
 import { restoreSession } from "@/redux/slices/authSlice";
 import { setTheme } from "@/redux/slices/uiSlice";
 import { Toaster } from "react-hot-toast";
+import { MotionConfig } from "framer-motion";
 
 function AppInitializer({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     store.dispatch(restoreSession());
 
-    // Restore dark/light theme
-    const savedTheme = localStorage.getItem("primebank_theme") as "light" | "dark" | null;
-    if (savedTheme) {
-      store.dispatch(setTheme(savedTheme));
-    } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      store.dispatch(setTheme("dark"));
-    }
+    // Clear legacy auto-detected theme key and restore explicit user preference (default: light)
+    localStorage.removeItem("primebank_theme");
+    const savedTheme = localStorage.getItem("primebank_ui_theme") as "light" | "dark" | null;
+    store.dispatch(setTheme(savedTheme === "dark" ? "dark" : "light"));
   }, []);
 
   return (
@@ -28,11 +26,12 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
         toastOptions={{
           duration: 4000,
           style: {
-            background: "#0f172a",
-            color: "#fff",
-            borderRadius: "10px",
+            background: "#081224",
+            color: "#f8fafc",
+            border: "1px solid rgba(71, 176, 255, 0.25)",
+            borderRadius: "14px",
             fontSize: "14px",
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
+            boxShadow: "0 12px 30px -6px rgba(24, 143, 255, 0.25)",
           },
           success: {
             iconTheme: {
@@ -55,7 +54,9 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 export default function ReduxProvider({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <AppInitializer>{children}</AppInitializer>
+      <MotionConfig reducedMotion="user">
+        <AppInitializer>{children}</AppInitializer>
+      </MotionConfig>
     </Provider>
   );
 }

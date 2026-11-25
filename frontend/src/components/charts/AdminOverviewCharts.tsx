@@ -20,7 +20,7 @@ interface AdminChartsProps {
   analytics: AdminAnalytics;
 }
 
-const COLORS = ["#0c87eb", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+const COLORS = ["#0d7ef5", "#10b981", "#2fa3ff", "#0660cf", "#75bdff"];
 
 export const AdminOverviewCharts: React.FC<AdminChartsProps> = ({ analytics }) => {
   const { monthlyBankingActivity = [], accountDistribution = [], loanStats = [] } = analytics;
@@ -28,7 +28,7 @@ export const AdminOverviewCharts: React.FC<AdminChartsProps> = ({ analytics }) =
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Monthly Activity Bar Chart */}
-      <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="lg:col-span-2 glass-surface p-6 rounded-3xl">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
@@ -65,14 +65,14 @@ export const AdminOverviewCharts: React.FC<AdminChartsProps> = ({ analytics }) =
               <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
               <Bar dataKey="deposit" name="Deposits" fill="#10b981" radius={[4, 4, 0, 0]} />
               <Bar dataKey="withdrawal" name="Withdrawals" fill="#ef4444" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="transfer" name="Transfers" fill="#0c87eb" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="transfer" name="Transfers" fill="#0d7ef5" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Account Type Distribution Pie Chart */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="glass-surface p-6 rounded-3xl">
         <div className="mb-4">
           <h3 className="font-bold text-base text-slate-900 dark:text-white">
             Account Distribution

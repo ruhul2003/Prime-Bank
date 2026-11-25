@@ -1,4 +1,4 @@
-﻿export function exportToCsv(filename: string, rows: object[]) {
+export function exportToCsv(filename: string, rows: object[]) {
   if (!rows || !rows.length) return;
   const separator = ',';
   const keys = Object.keys(rows[0]);
@@ -9,13 +9,13 @@
       .map((row) => {
         return keys
           .map((k) => {
-            let cell = (row as any)[k] === null || (row as any)[k] === undefined ? '' : (row as any)[k];
-            cell = cell instanceof Date ? cell.toLocaleString() : cell.toString();
-            cell = cell.replace(/\"/g, '\"\"');
-            if (cell.search(/(\"|,|\n)/g) >= 0) {
-              cell = \"\";
+            let cell = (row as Record<string, unknown>)[k] === null || (row as Record<string, unknown>)[k] === undefined ? '' : (row as Record<string, unknown>)[k];
+            const cellStr = cell instanceof Date ? cell.toLocaleString() : String(cell);
+            let escaped = cellStr.replace(/"/g, '""');
+            if (escaped.search(/("|,|\n)/g) >= 0) {
+              escaped = `"${escaped}"`;
             }
-            return cell;
+            return escaped;
           })
           .join(separator);
       })

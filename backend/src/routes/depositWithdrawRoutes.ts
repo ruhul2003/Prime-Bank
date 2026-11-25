@@ -7,14 +7,15 @@ import {
 } from "../controllers/depositWithdrawController";
 import { authenticate } from "../middlewares/auth";
 import { authorizeRoles } from "../middlewares/role";
+import { asyncHandler } from "../middlewares/errorHandler";
 
 const router = Router();
 
 router.use(authenticate);
 
-router.post("/request", submitRequest);
-router.get("/my-requests", getMyRequests);
-router.get("/all", authorizeRoles("admin", "staff"), getAllRequests);
-router.patch("/:id/review", authorizeRoles("admin", "staff"), reviewRequest);
+router.post("/request", asyncHandler(submitRequest));
+router.get("/my-requests", asyncHandler(getMyRequests));
+router.get("/all", authorizeRoles("admin", "staff"), asyncHandler(getAllRequests));
+router.patch("/:id/review", authorizeRoles("admin", "staff"), asyncHandler(reviewRequest));
 
 export default router;

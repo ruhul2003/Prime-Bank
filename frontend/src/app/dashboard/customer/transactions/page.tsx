@@ -79,7 +79,7 @@ export default function CustomerTransactionsPage() {
       </div>
 
       {/* Advanced Filter Toolbar */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+      <div className="glass-surface rounded-3xl p-5 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Search */}
           <div className="lg:col-span-2 relative">
@@ -168,7 +168,7 @@ export default function CustomerTransactionsPage() {
       </div>
 
       {/* Transactions Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="glass-surface rounded-3xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-semibold text-xs uppercase tracking-wider">

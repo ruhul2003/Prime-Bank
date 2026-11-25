@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setSidebarOpen } from "@/redux/slices/uiSlice";
 import {
@@ -19,9 +19,12 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get("tab");
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { sidebarOpen } = useAppSelector((state) => state.ui);
@@ -60,24 +63,30 @@ export const Sidebar: React.FC = () => {
   return (
     <>
       {/* Mobile Backdrop */}
-      {sidebarOpen && (
-        <div
-          onClick={() => dispatch(setSidebarOpen(false))}
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden transition-opacity"
-        />
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => dispatch(setSidebarOpen(false))}
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-40 w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed top-0 bottom-0 left-0 z-40 w-64 border-r border-white/75 dark:border-slate-800/80 bg-white/70 dark:bg-navy-900/80 backdrop-blur-2xl backdrop-saturate-150 shadow-[12px_0_40px_-14px_rgba(13,126,245,0.20)] flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex h-16 items-center justify-between px-6 border-b border-white/70 dark:border-slate-800/80">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-bold shadow-md shadow-brand-500/20">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-[#2fa3ff] to-[#0660cf] flex items-center justify-center text-white font-bold shadow-brand-glow">
               <Building2 className="w-5 h-5" />
             </div>
             <div className="font-extrabold tracking-tight text-lg text-slate-900 dark:text-white">
@@ -93,7 +102,7 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* Role Badge Card */}
-        <div className="p-4 mx-4 my-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80">
+        <div className="p-4 mx-4 my-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 backdrop-blur-md border border-white/80 ring-1 ring-brand-200/50 dark:border-slate-700/70 shadow-sm">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Active Security Clearance
           </div>
@@ -125,12 +134,14 @@ export const Sidebar: React.FC = () => {
           </div>
           {currentNav.map((item) => {
             const Icon = item.icon;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard/customer" &&
-                item.href !== "/dashboard/admin" &&
-                item.href !== "/dashboard/staff" &&
-                pathname.startsWith(item.href.split("?")[0]));
+            const [itemPath, itemQuery] = item.href.split("?");
+            const itemTab = itemQuery ? new URLSearchParams(itemQuery).get("tab") : null;
+            const isActive = itemTab
+              ? pathname === itemPath && currentTab === itemTab
+              : itemPath === "/dashboard/admin" || itemPath === "/dashboard/staff"
+              ? pathname === itemPath && !currentTab
+              : pathname === itemPath ||
+                (itemPath !== "/dashboard/customer" && pathname.startsWith(itemPath));
 
             return (
               <Link
@@ -140,16 +151,23 @@ export const Sidebar: React.FC = () => {
                   if (window.innerWidth < 1024) dispatch(setSidebarOpen(false));
                 }}
                 className={cn(
-                  "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group",
+                  "relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors group",
                   isActive
-                    ? "bg-brand-500 text-white shadow-md shadow-brand-500/20 font-semibold"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
+                    ? "text-sky-700 dark:text-sky-300 font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-sky-50/60 dark:hover:bg-slate-800/60 hover:text-sky-700 dark:hover:text-white"
                 )}
               >
+                {isActive && (
+                  <motion.span
+                    layoutId="sidebar-active-pill"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    className="absolute inset-0 rounded-xl bg-sky-50/95 dark:bg-sky-950/60 border border-sky-200/80 dark:border-sky-800/70 shadow-[0_4px_14px_-4px_rgba(14,165,233,0.18)] -z-10"
+                  />
+                )}
                 <Icon
                   className={cn(
                     "w-4 h-4 transition-transform group-hover:scale-110",
-                    isActive ? "text-white" : "text-slate-400 group-hover:text-brand-500"
+                    isActive ? "text-sky-600 dark:text-sky-400" : "text-slate-400 group-hover:text-sky-500"
                   )}
                 />
                 <span>{item.label}</span>

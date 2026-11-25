@@ -88,7 +88,7 @@ export default function CustomerAccountsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-400 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-50 text-brand-600 border border-brand-200/70 dark:bg-brand-950/60 dark:text-brand-400 dark:border-brand-800 mb-2">
             <CreditCard className="w-3.5 h-3.5" />
             Portfolio Management
           </div>
@@ -102,7 +102,7 @@ export default function CustomerAccountsPage() {
 
         <button
           onClick={() => setIsOpenNewModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-500/20 transition self-start sm:self-auto"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full btn-azure font-bold text-sm self-start sm:self-auto"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Open Another Account</span>
@@ -116,10 +116,10 @@ export default function CustomerAccountsPage() {
           return (
             <div
               key={acc._id}
-              className={`rounded-3xl p-6 border transition flex flex-col justify-between shadow-sm ${
+              className={`rounded-3xl p-6 border transition flex flex-col justify-between ${
                 isSelected
-                  ? "bg-gradient-to-b from-brand-50/50 to-white dark:from-brand-950/20 dark:to-slate-900 border-brand-500 ring-2 ring-brand-500/20"
-                  : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+                  ? "bg-gradient-to-b from-brand-50/80 to-white dark:from-brand-950/30 dark:to-navy-900 border-brand-400 ring-2 ring-brand-400/25 shadow-glass-card"
+                  : "glass-surface"
               }`}
             >
               <div>
@@ -261,7 +261,7 @@ export default function CustomerAccountsPage() {
             <button
               type="submit"
               disabled={creating}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white"
+              className="px-5 py-2.5 rounded-full text-sm font-bold btn-azure"
             >
               {creating ? "Creating..." : "Create Account"}
             </button>
@@ -319,7 +319,7 @@ export default function CustomerAccountsPage() {
             <button
               type="submit"
               disabled={updatingPin}
-              className="px-4 py-2 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white"
+              className="px-4 py-2 rounded-full text-sm font-bold btn-azure"
             >
               {updatingPin ? "Updating..." : "Save New PIN"}
             </button>

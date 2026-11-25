@@ -34,7 +34,7 @@ export const seedDatabase = async () => {
     const admin = await User.create({
       name: "Alexander Vance",
       email: "admin@primebank.com",
-      password: "AdminPassword123!",
+      password: "admin123",
       role: "admin",
       phone: "+1 (800) 555-0101",
       address: "100 Wall Street, Suite 4200, New York, NY",
@@ -46,7 +46,7 @@ export const seedDatabase = async () => {
     const staff = await User.create({
       name: "Elena Rostova",
       email: "staff@primebank.com",
-      password: "StaffPassword123!",
+      password: "staff123",
       role: "staff",
       phone: "+1 (800) 555-0102",
       address: "245 Park Avenue, New York, NY",

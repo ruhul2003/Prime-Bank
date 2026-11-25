@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useGetAllCustomersQuery,
   useGetAllAccountsQuery,
@@ -36,11 +36,23 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import toast from "react-hot-toast";
 
-export default function StaffDashboardPage() {
+function StaffDashboardContent() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") || "transactions";
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const urlTab = searchParams.get("tab") || "transactions";
+  const [activeTab, setActiveTab] = useState(urlTab);
+
+  useEffect(() => {
+    setActiveTab(urlTab);
+  }, [urlTab]);
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    router.replace(tabId === "transactions" ? "/dashboard/staff" : `/dashboard/staff?tab=${tabId}`, {
+      scroll: false,
+    });
+  };
 
   // Queries
   const { data: customersData, refetch: refetchCustomers } = useGetAllCustomersQuery();
@@ -172,25 +184,25 @@ export default function StaffDashboardPage() {
 
       {/* Staff Metrics Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="p-5 rounded-3xl glass-surface">
           <span className="text-xs font-bold uppercase text-slate-400">Total Customers</span>
           <div className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
             {customersData?.total || 0}
           </div>
         </div>
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="p-5 rounded-3xl glass-surface">
           <span className="text-xs font-bold uppercase text-slate-400">Transactions Audited</span>
-          <div className="text-2xl font-extrabold text-brand-600 dark:text-brand-400 mt-1">
+          <div className="text-2xl font-extrabold text-brand-500 dark:text-brand-400 mt-1">
             {transactions.length}
           </div>
         </div>
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="p-5 rounded-3xl glass-surface">
           <span className="text-xs font-bold uppercase text-slate-400">Loans to Review</span>
           <div className="text-2xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">
             {(loansData?.loans || []).filter((l: any) => l.status === "pending").length}
           </div>
         </div>
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="p-5 rounded-3xl glass-surface">
           <span className="text-xs font-bold uppercase text-slate-400">Cash Requests</span>
           <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">
             {(requestsData?.requests || []).filter((r: any) => r.status === "pending").length}
@@ -199,7 +211,7 @@ export default function StaffDashboardPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200 dark:border-slate-800 flex overflow-x-auto space-x-6 text-sm font-semibold">
+      <div className="p-1.5 rounded-2xl glass-panel flex overflow-x-auto gap-1.5 text-sm font-semibold">
         {[
           { id: "transactions", label: "Transaction Desk & AML" },
           { id: "onboard", label: "Customer Onboarding" },
@@ -208,11 +220,12 @@ export default function StaffDashboardPage() {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`pb-4 transition border-b-2 whitespace-nowrap ${
+            type="button"
+            onClick={() => handleTabChange(tab.id)}
+            className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
               activeTab === tab.id
-                ? "border-amber-500 text-amber-600 dark:text-amber-400 font-bold"
-                : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                ? "bg-sky-50 text-sky-700 border border-sky-200/80 shadow-sm dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800/70 font-bold"
+                : "text-slate-600 dark:text-slate-400 hover:bg-sky-50/50 dark:hover:bg-slate-800/50 hover:text-sky-700 dark:hover:text-white border border-transparent"
             }`}
           >
             {tab.label}
@@ -222,7 +235,7 @@ export default function StaffDashboardPage() {
 
       {/* TAB 1: TRANSACTION MANAGEMENT & AML MONITORING */}
       {activeTab === "transactions" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           {/* Search & Filters */}
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:w-80">
@@ -357,7 +370,7 @@ export default function StaffDashboardPage() {
       {/* TAB 2: CUSTOMER ONBOARDING */}
       {activeTab === "onboard" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="lg:col-span-1 glass-panel p-6 rounded-3xl">
             <h3 className="font-bold text-base text-slate-900 dark:text-white mb-1">
               Onboard New Customer
             </h3>
@@ -446,7 +459,7 @@ export default function StaffDashboardPage() {
             </form>
           </div>
 
-          <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="lg:col-span-2 glass-panel p-6 rounded-3xl overflow-hidden">
             <h3 className="font-bold text-base text-slate-900 dark:text-white mb-4">
               Registered Customers Registry
             </h3>
@@ -482,7 +495,7 @@ export default function StaffDashboardPage() {
 
       {/* TAB 3: LOAN ASSISTANCE & PRELIMINARY REVIEW */}
       {activeTab === "loans" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800">
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Credit Assistance & Application Review
@@ -559,7 +572,7 @@ export default function StaffDashboardPage() {
 
       {/* TAB 4: CASH DESK REQUESTS */}
       {activeTab === "requests" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800">
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Customer Deposit & Withdrawal Requests
@@ -750,5 +763,19 @@ export default function StaffDashboardPage() {
         </form>
       </Modal>
     </div>
+  );
+}
+
+export default function StaffDashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="glass-panel rounded-3xl p-10 text-center text-sm text-slate-400">
+          Loading Staff Workstation...
+        </div>
+      }
+    >
+      <StaffDashboardContent />
+    </Suspense>
   );
 }

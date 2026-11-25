@@ -104,7 +104,7 @@ export default function CustomerLoansPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-50 text-brand-600 border border-brand-200/70 dark:bg-brand-950/60 dark:text-brand-400 dark:border-brand-800 mb-2">
             <FileText className="w-3.5 h-3.5" />
             Credit Facilities & Term Financing
           </div>
@@ -118,7 +118,7 @@ export default function CustomerLoansPage() {
 
         <button
           onClick={() => setIsApplyModalOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-500/20 transition self-start sm:self-auto"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full btn-azure font-bold text-sm self-start sm:self-auto"
         >
           <span>Apply for New Loan</span>
           <ArrowRight className="w-4 h-4" />
@@ -127,10 +127,10 @@ export default function CustomerLoansPage() {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-6 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Total Remaining Debt</span>
-            <TrendingDown className="w-5 h-5 text-purple-500" />
+            <TrendingDown className="w-5 h-5 text-brand-500" />
           </div>
           <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
             {formatCurrency(totalDebt)}
@@ -138,7 +138,7 @@ export default function CustomerLoansPage() {
           <p className="text-[11px] text-slate-400 mt-1">{activeLoans.length} active loan facilities</p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-6 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Monthly Obligation</span>
             <DollarSign className="w-5 h-5 text-brand-500" />
@@ -149,7 +149,7 @@ export default function CustomerLoansPage() {
           <p className="text-[11px] text-slate-400 mt-1">Due next billing cycle</p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-6 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Underwriting Status</span>
             <Clock className="w-5 h-5 text-amber-500" />
@@ -168,7 +168,7 @@ export default function CustomerLoansPage() {
         </h3>
 
         {loans.length === 0 ? (
-          <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+          <div className="p-12 text-center glass-surface rounded-3xl">
             <FileText className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
             <h4 className="font-bold text-slate-900 dark:text-white text-base">No Loans Found</h4>
             <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">
@@ -176,7 +176,7 @@ export default function CustomerLoansPage() {
             </p>
             <button
               onClick={() => setIsApplyModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs"
+              className="px-5 py-2.5 rounded-full btn-azure font-semibold text-xs"
             >
               Start an Application
             </button>
@@ -192,7 +192,7 @@ export default function CustomerLoansPage() {
               return (
                 <div
                   key={loan._id}
-                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col justify-between"
+                  className="glass-surface rounded-3xl p-6 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -287,7 +287,7 @@ export default function CustomerLoansPage() {
                             toast.success("All installments paid!");
                           }
                         }}
-                        className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-sm transition"
+                        className="px-4 py-2 rounded-full btn-azure font-bold text-xs"
                       >
                         Pay Next Installment
                       </button>
@@ -452,7 +452,7 @@ export default function CustomerLoansPage() {
             <button
               type="submit"
               disabled={applying}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-500/20"
+              className="px-5 py-2.5 rounded-full text-sm font-bold btn-azure"
             >
               {applying ? "Submitting..." : "Submit Application"}
             </button>
@@ -501,7 +501,7 @@ export default function CustomerLoansPage() {
                                 item.installmentNumber
                               )
                             }
-                            className="px-2.5 py-1 rounded-lg text-xs font-bold bg-brand-600 text-white hover:bg-brand-700"
+                            className="px-3 py-1 rounded-full text-xs font-bold btn-azure"
                           >
                             Pay
                           </button>

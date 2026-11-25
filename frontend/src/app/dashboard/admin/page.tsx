@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useGetAdminAnalyticsQuery,
   useGetAllCustomersQuery,
@@ -42,10 +42,22 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import toast from "react-hot-toast";
 
-export default function AdminDashboardPage() {
+function AdminDashboardContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") || "overview";
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const urlTab = searchParams.get("tab") || "overview";
+  const [activeTab, setActiveTab] = useState(urlTab);
+
+  useEffect(() => {
+    setActiveTab(urlTab);
+  }, [urlTab]);
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    router.replace(tabId === "overview" ? "/dashboard/admin" : `/dashboard/admin?tab=${tabId}`, {
+      scroll: false,
+    });
+  };
 
   // Queries
   const { data: analyticsData, isLoading: analyticsLoading } = useGetAdminAnalyticsQuery();
@@ -203,7 +215,7 @@ export default function AdminDashboardPage() {
 
       {/* Primary KPI Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-5 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Total Bank Reserves</span>
             <DollarSign className="w-5 h-5 text-emerald-500" />
@@ -214,7 +226,7 @@ export default function AdminDashboardPage() {
           <p className="text-[11px] text-slate-400 mt-1">Across all client deposit accounts</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-5 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Total Customers</span>
             <Users className="w-5 h-5 text-brand-500" />
@@ -227,7 +239,7 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-5 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Cumulative Inflows</span>
             <ArrowDownLeft className="w-5 h-5 text-emerald-500" />
@@ -240,7 +252,7 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="p-5 rounded-3xl glass-surface">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Pending Action</span>
             <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -255,7 +267,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="border-b border-slate-200 dark:border-slate-800 flex overflow-x-auto space-x-6 text-sm font-semibold">
+      <div className="p-1.5 rounded-2xl glass-panel flex overflow-x-auto gap-1.5 text-sm font-semibold">
         {[
           { id: "overview", label: "Analytics & Charts" },
           { id: "customers", label: `Customers (${customersData?.total || 0})` },
@@ -266,11 +278,12 @@ export default function AdminDashboardPage() {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`pb-4 transition border-b-2 whitespace-nowrap ${
+            type="button"
+            onClick={() => handleTabChange(tab.id)}
+            className={`px-4 py-2 rounded-xl transition-all whitespace-nowrap ${
               activeTab === tab.id
-                ? "border-brand-600 text-brand-600 dark:text-brand-400 dark:border-brand-400 font-bold"
-                : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                ? "bg-gradient-to-b from-sky-100 to-sky-200/85 text-sky-900 border border-sky-300 shadow-[0_6px_16px_-4px_rgba(14,165,233,0.28)] dark:from-sky-900/70 dark:to-sky-950/80 dark:text-sky-200 dark:border-sky-700/80 font-bold"
+                : "text-slate-600 dark:text-slate-400 hover:bg-sky-100/50 dark:hover:bg-slate-800/50 hover:text-sky-800 dark:hover:text-white border border-transparent"
             }`}
           >
             {tab.label}
@@ -279,15 +292,21 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* TAB 1: OVERVIEW & DATA VISUALIZATIONS */}
-      {activeTab === "overview" && analyticsData && (
+      {activeTab === "overview" && (
         <div className="space-y-6">
-          <AdminOverviewCharts analytics={analyticsData} />
+          {analyticsData ? (
+            <AdminOverviewCharts analytics={analyticsData} />
+          ) : (
+            <div className="glass-panel rounded-3xl p-10 text-center text-sm text-slate-400">
+              {analyticsLoading ? "Loading analytics & charts..." : "No analytics data available."}
+            </div>
+          )}
         </div>
       )}
 
       {/* TAB 2: CUSTOMER MANAGEMENT */}
       {activeTab === "customers" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           {/* Search & Filter Bar */}
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative w-full sm:w-80">
@@ -410,7 +429,7 @@ export default function AdminDashboardPage() {
 
       {/* TAB 3: BANK ACCOUNT MANAGEMENT */}
       {activeTab === "accounts" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Institutional Bank Accounts Registry
@@ -496,7 +515,7 @@ export default function AdminDashboardPage() {
 
       {/* TAB 4: LOAN UNDERWRITING & APPROVALS */}
       {activeTab === "loans" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white">
@@ -596,7 +615,7 @@ export default function AdminDashboardPage() {
 
       {/* TAB 5: DEPOSIT & WITHDRAWAL REQUESTS */}
       {activeTab === "requests" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800">
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Customer Deposit & Cash Withdrawal Queue
@@ -685,7 +704,7 @@ export default function AdminDashboardPage() {
 
       {/* TAB 6: SECURITY & SUSPICIOUS TRANSACTIONS */}
       {activeTab === "audit" && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800">
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Flagged Suspicious Transactions & AML Audit
@@ -980,5 +999,19 @@ export default function AdminDashboardPage() {
         </form>
       </Modal>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="glass-panel rounded-3xl p-10 text-center text-sm text-slate-400">
+          Loading Admin Dashboard...
+        </div>
+      }
+    >
+      <AdminDashboardContent />
+    </Suspense>
   );
 }

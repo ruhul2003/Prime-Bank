@@ -7,13 +7,14 @@ import {
   changePassword,
 } from "../controllers/authController";
 import { authenticate } from "../middlewares/auth";
+import { asyncHandler } from "../middlewares/errorHandler";
 
 const router = Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.get("/me", authenticate, getMe);
-router.put("/profile", authenticate, updateProfile);
-router.put("/change-password", authenticate, changePassword);
+router.post("/register", asyncHandler(register));
+router.post("/login", asyncHandler(login));
+router.get("/me", authenticate, asyncHandler(getMe));
+router.put("/profile", authenticate, asyncHandler(updateProfile));
+router.put("/change-password", authenticate, asyncHandler(changePassword));
 
 export default router;

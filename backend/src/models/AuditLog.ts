@@ -1,10 +1,11 @@
-﻿import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document } from "mongoose";
 
 export interface IAuditLog extends Document {
   action: string;
   performedBy: Schema.Types.ObjectId;
+  targetType?: string;
   targetId?: string;
-  details?: string;
+  details?: Record<string, unknown> | string;
   ipAddress?: string;
   createdAt: Date;
 }
@@ -12,12 +13,13 @@ export interface IAuditLog extends Document {
 const auditLogSchema = new Schema<IAuditLog>(
   {
     action: { type: String, required: true },
-    performedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    performedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    targetType: { type: String },
     targetId: { type: String },
-    details: { type: String },
+    details: { type: Schema.Types.Mixed },
     ipAddress: { type: String },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-export const AuditLog = model<IAuditLog>('AuditLog', auditLogSchema);
+export const AuditLog = model<IAuditLog>("AuditLog", auditLogSchema);

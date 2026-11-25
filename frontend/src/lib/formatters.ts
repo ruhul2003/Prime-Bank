@@ -1,4 +1,4 @@
-﻿export function formatCurrency(amount: number, currency: string = 'USD'): string {
+export function formatCurrency(amount: number, currency: string = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
@@ -10,7 +10,7 @@
 export function maskAccountNumber(accountNumber: string): string {
   if (!accountNumber || accountNumber.length < 4) return accountNumber;
   const lastFour = accountNumber.slice(-4);
-  return •••• •••• •••• ;
+  return `•••• •••• •••• ${lastFour}`;
 }
 
 export function formatCompactDate(dateStr: string | Date): string {
@@ -23,5 +23,5 @@ export function formatCompactDate(dateStr: string | Date): string {
 }
 
 export function formatPercent(value: number): string {
-  return ${(value * 100).toFixed(2)}%;
+  return `${(value * 100).toFixed(2)}%`;
 }

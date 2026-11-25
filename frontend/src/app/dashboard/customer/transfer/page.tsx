@@ -126,7 +126,7 @@ export default function FundTransferPage() {
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-400 mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-50 text-brand-600 border border-brand-200/70 dark:bg-brand-950/60 dark:text-brand-400 dark:border-brand-800 mb-2">
           <ArrowRightLeft className="w-3.5 h-3.5" />
           Domestic & Internal Clearing
         </div>
@@ -140,7 +140,7 @@ export default function FundTransferPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Transfer Form */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+        <div className="lg:col-span-2 glass-surface rounded-3xl p-6 sm:p-8">
           <form onSubmit={handleTransferSubmit} className="space-y-6">
             {/* Source Account */}
             <div>
@@ -293,7 +293,7 @@ export default function FundTransferPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 px-6 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-sm shadow-lg shadow-brand-500/25 transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-4 px-6 rounded-full btn-azure font-extrabold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -309,7 +309,7 @@ export default function FundTransferPage() {
 
         {/* Sidebar Info & Settlement Breakdown */}
         <div className="space-y-6">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <div className="glass-surface rounded-3xl p-6">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white mb-4">
               Transfer Fee Breakdown
             </h3>

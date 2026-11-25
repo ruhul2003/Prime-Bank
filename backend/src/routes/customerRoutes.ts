@@ -7,15 +7,16 @@ import {
 } from "../controllers/customerController";
 import { authenticate } from "../middlewares/auth";
 import { authorizeRoles } from "../middlewares/role";
+import { asyncHandler } from "../middlewares/errorHandler";
 
 const router = Router();
 
 router.use(authenticate);
 router.use(authorizeRoles("admin", "staff"));
 
-router.get("/all", getAllCustomers);
-router.get("/:id", getCustomerDetails);
-router.patch("/:id/status", updateCustomerStatus);
-router.post("/onboard", registerCustomerByStaff);
+router.get("/all", asyncHandler(getAllCustomers));
+router.get("/:id", asyncHandler(getCustomerDetails));
+router.patch("/:id/status", asyncHandler(updateCustomerStatus));
+router.post("/onboard", asyncHandler(registerCustomerByStaff));
 
 export default router;
