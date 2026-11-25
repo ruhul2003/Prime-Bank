@@ -42,12 +42,6 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemo = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    toast.success("Credentials populated. Click 'Sign In' to proceed.");
-  };
-
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-[#f7fbff] dark:bg-navy-950 sky-atmosphere">
       <motion.div
@@ -122,36 +116,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Quick Evaluator Fill Section */}
-          <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-            <span className="block text-center text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
-              One-Click Demo Fill
-            </span>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillDemo("admin@primebank.com", "admin123")}
-                className="py-2 px-2 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 font-medium hover:bg-rose-100 transition text-center"
-              >
-                Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemo("staff@primebank.com", "staff123")}
-                className="py-2 px-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-medium hover:bg-amber-100 transition text-center"
-              >
-                Bank Staff
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemo("customer@primebank.com", "CustomerPassword123!")}
-                className="py-2 px-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-medium hover:bg-emerald-100 transition text-center"
-              >
-                Customer
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Link to Register */}
