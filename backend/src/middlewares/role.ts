@@ -2,6 +2,9 @@ import { Response, NextFunction } from "express";
 import { AuthRequest } from "./auth";
 import { UserRole } from "../models/User";
 
+/**
+ * Restricts route access to users whose role matches one of the allowed roles.
+ */
 export const authorizeRoles = (...roles: UserRole[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
