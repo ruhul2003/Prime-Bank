@@ -1,4 +1,4 @@
-﻿import { Response } from 'express';
+import { Response } from 'express';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -29,15 +29,16 @@ export function sendPaginated<T>(
   limit: number,
   total: number
 ) {
+  const safeLimit = limit > 0 ? limit : 1;
   return res.status(200).json({
     success: true,
     message,
     data,
     meta: {
       page,
-      limit,
+      limit: safeLimit,
       total,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / safeLimit),
     },
   });
 }
