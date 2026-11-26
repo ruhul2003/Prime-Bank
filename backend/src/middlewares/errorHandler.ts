@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
+/**
+ * Wraps async Express route handlers and forwards rejected promises to Express error middleware.
+ */
 export const asyncHandler =
   <T extends Request = Request>(
     fn: (req: T, res: Response, next: NextFunction) => Promise<unknown> | unknown
@@ -8,6 +11,9 @@ export const asyncHandler =
     Promise.resolve(fn(req as T, res, next)).catch(next);
   };
 
+/**
+ * Represents a known operational error carrying an explicit HTTP status code.
+ */
 export class AppError extends Error {
   statusCode: number;
   constructor(message: string, statusCode: number = 400) {
