@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export function configureSecurityHeaders(req: Request, res: Response, next: NextFunction) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -6,5 +6,6 @@ export function configureSecurityHeaders(req: Request, res: Response, next: Next
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   next();
 }
