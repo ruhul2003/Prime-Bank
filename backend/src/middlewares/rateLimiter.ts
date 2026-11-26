@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 const requestCounts = new Map<string, { count: number; expiresAt: number }>();
 
@@ -6,6 +6,11 @@ export function simpleRateLimiter(windowMs: number = 60000, maxRequests: number 
   return (req: Request, res: Response, next: NextFunction) => {
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const now = Date.now();
+    if (requestCounts.size > 1000) {
+      for (const [key, entry] of requestCounts.entries()) {
+        if (now > entry.expiresAt) requestCounts.delete(key);
+      }
+    }
     const clientRecord = requestCounts.get(ip);
 
     if (!clientRecord || now > clientRecord.expiresAt) {
