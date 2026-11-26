@@ -65,6 +65,8 @@ export const Navbar: React.FC = () => {
       {/* Left: Mobile hamburger & Brand/Breadcrumb */}
       <div className="flex items-center gap-3">
         <button
+          type="button"
+          aria-label="Open navigation menu"
           onClick={() => dispatch(toggleSidebar())}
           className="p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-brand-50 dark:hover:bg-slate-800 lg:hidden"
         >
@@ -163,6 +165,8 @@ export const Navbar: React.FC = () => {
         {/* Notifications */}
         <div className="relative">
           <button
+            type="button"
+            aria-label="View notifications"
             onClick={() => setNotificationOpen(!notificationOpen)}
             className="relative p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
@@ -249,6 +253,8 @@ export const Navbar: React.FC = () => {
             </div>
 
             <button
+              type="button"
+              aria-label="Log out"
               onClick={handleLogout}
               title="Log out"
               className="p-2 rounded-full text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
