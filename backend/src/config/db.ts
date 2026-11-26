@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 let cachedConnectionPromise: Promise<typeof mongoose> | null = null;
 
+/**
+ * Connects to MongoDB and caches the in-flight promise across serverless invocations.
+ */
 export const connectDB = async (): Promise<void> => {
   if (mongoose.connection.readyState === 1) {
     return;
