@@ -89,6 +89,7 @@ export default function RegisterPage() {
                 <input
                   type="text"
                   name="name"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Jonathan Edwards"
@@ -108,6 +109,7 @@ export default function RegisterPage() {
                   <input
                     type="email"
                     name="email"
+                    autoComplete="email"
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="jonathan@domain.com"
@@ -126,6 +128,7 @@ export default function RegisterPage() {
                   <input
                     type="text"
                     name="phone"
+                    autoComplete="tel"
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+1 (555) 234-5678"
@@ -144,6 +147,7 @@ export default function RegisterPage() {
                 <input
                   type="text"
                   name="address"
+                  autoComplete="street-address"
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="123 Financial Blvd, Suite 400"
@@ -161,6 +165,7 @@ export default function RegisterPage() {
                 <input
                   type="password"
                   name="password"
+                  autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Min 6 characters"
