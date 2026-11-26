@@ -60,6 +60,8 @@ export const Modal: React.FC<ModalProps> = ({
 
           {/* Modal Dialog */}
           <motion.div
+            role="dialog"
+            aria-modal="true"
             initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
@@ -81,6 +83,8 @@ export const Modal: React.FC<ModalProps> = ({
                 )}
               </div>
               <button
+                type="button"
+                aria-label="Close modal"
                 onClick={onClose}
                 className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
               >
