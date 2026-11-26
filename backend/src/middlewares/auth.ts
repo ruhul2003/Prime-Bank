@@ -6,6 +6,9 @@ export interface AuthRequest extends Request {
   user?: IUser;
 }
 
+/**
+ * Verifies the Bearer JWT and attaches the active user record to the request.
+ */
 export const authenticate = async (
   req: AuthRequest,
   res: Response,
