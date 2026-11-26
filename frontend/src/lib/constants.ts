@@ -1,4 +1,4 @@
-﻿export const TRANSACTION_CATEGORIES = [
+export const TRANSACTION_CATEGORIES = [
   'General',
   'Salary',
   'Utilities',
@@ -15,7 +15,7 @@ export const DEFAULT_BANKING_LIMITS = {
   MIN_ACCOUNT_BALANCE: 50,
   SAVINGS_ANNUAL_INTEREST_RATE: 0.045,
   BUSINESS_TRANSACTION_FEE_RATE: 0.001,
-};
+} as const;
 
 export const ACCOUNT_TYPE_LABELS: Record<string, string> = {
   SAVINGS: 'High-Yield Savings',
