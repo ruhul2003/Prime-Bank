@@ -9,6 +9,9 @@ interface StatCardProps {
   subtitle?: string;
 }
 
+/**
+ * Displays a dashboard KPI metric card with an icon and optional trend delta.
+ */
 export const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
