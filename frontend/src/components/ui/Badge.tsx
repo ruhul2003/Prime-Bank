@@ -15,6 +15,9 @@ interface BadgeProps {
   size?: "sm" | "md";
 }
 
+/**
+ * Reusable status badge supporting semantic color variants and compact sizing.
+ */
 export const Badge: React.FC<BadgeProps> = ({
   children,
   variant = "default",
