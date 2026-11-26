@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 
+/**
+ * Attaches a unique x-request-id header and logs HTTP completion latency.
+ */
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const requestId = crypto.randomUUID();
   req.headers['x-request-id'] = requestId;
