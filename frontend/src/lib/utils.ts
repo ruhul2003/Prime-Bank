@@ -21,6 +21,7 @@ export function formatDate(dateString: string | undefined | null): string {
   if (!dateString) return "N/A";
   try {
     const d = new Date(dateString);
+    if (Number.isNaN(d.getTime())) return dateString;
     return d.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
