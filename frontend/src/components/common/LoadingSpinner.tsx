@@ -19,7 +19,11 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const content = (
-    <div className="flex flex-col items-center justify-center gap-3 p-6">
+    <div
+      role="status"
+      aria-label={text || "Loading"}
+      className="flex flex-col items-center justify-center gap-3 p-6"
+    >
       <Loader2 className={`${sizeMap[size]} text-brand-500 animate-spin`} />
       {text && <p className="text-sm font-medium text-slate-400">{text}</p>}
     </div>
