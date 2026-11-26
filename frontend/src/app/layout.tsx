@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "PrimeBank | Advanced Digital Banking & Treasury Management",
   description:
     "Institutional-grade digital banking platform with atomic fund consistency, multi-account management, automated underwriting, and role-based access control.",
+  keywords: ["PrimeBank", "digital banking", "treasury management", "fund transfer", "loan underwriting"],
 };
 
 export default function RootLayout({
