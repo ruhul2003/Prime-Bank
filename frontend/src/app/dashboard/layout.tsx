@@ -39,7 +39,11 @@ export default function DashboardLayout({
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f7fbff] dark:bg-navy-950 sky-atmosphere">
+      <div
+        role="status"
+        aria-live="polite"
+        className="min-h-screen flex items-center justify-center bg-[#f7fbff] dark:bg-navy-950 sky-atmosphere"
+      >
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin" />
           <span className="text-xs font-mono text-slate-400">Loading PrimeBank Session...</span>
