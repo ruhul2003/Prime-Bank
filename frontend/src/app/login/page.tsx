@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/redux/store";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { useLoginMutation } from "@/redux/api/apiSlice";
-import { Building2, Lock, Mail, ArrowRight, Shield, ShieldCheck, UserCheck } from "lucide-react";
+import { Building2, Lock, Mail, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
@@ -75,6 +75,7 @@ export default function LoginPage() {
                 <Mail className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@primebank.com"
@@ -92,6 +93,7 @@ export default function LoginPage() {
                 <Lock className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="password"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
