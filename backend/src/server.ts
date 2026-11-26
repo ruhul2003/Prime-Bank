@@ -65,6 +65,15 @@ app.use("/api", async (_req, _res, next) => {
   }
 });
 
+// Root API status
+app.get("/", (_req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    service: "PrimeBank Core Banking API",
+    health: "/health",
+  });
+});
+
 // Health check
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
