@@ -22,4 +22,7 @@ const auditLogSchema = new Schema<IAuditLog>(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
+auditLogSchema.index({ action: 1, createdAt: -1 });
+auditLogSchema.index({ performedBy: 1, createdAt: -1 });
+
 export const AuditLog = model<IAuditLog>("AuditLog", auditLogSchema);
