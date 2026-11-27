@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import { connectDB } from "./config/db";
 import { errorHandler } from "./middlewares/errorHandler";
+import { configureSecurityHeaders } from "./utils/securityHeaders";
 
 // Import Routes
 import authRoutes from "./routes/authRoutes";
@@ -19,6 +20,7 @@ dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
+app.set("trust proxy", 1);
 
 // Connect to Database (eagerly on local startup; awaited per request for serverless)
 if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
@@ -35,6 +37,7 @@ const allowedOrigins = [
 ];
 
 // Middlewares
+app.use(configureSecurityHeaders);
 app.use(
   cors({
     origin: (origin, callback) => {
