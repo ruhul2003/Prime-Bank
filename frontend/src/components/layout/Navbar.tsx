@@ -10,6 +10,7 @@ import {
   useGetMyNotificationsQuery,
   useMarkNotificationReadMutation,
   useMarkAllNotificationsReadMutation,
+  useLogoutSessionMutation,
 } from "@/redux/api/apiSlice";
 import {
   Bell,
@@ -21,11 +22,13 @@ import {
   CheckCheck,
   Building2,
   ChevronDown,
+  KeyRound,
 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChangePasswordModal } from "@/components/ui/ChangePasswordModal";
 
 export const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,6 +39,7 @@ export const Navbar: React.FC = () => {
 
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   // Fetch Accounts (if customer)
   const { data: accountsData } = useGetMyAccountsQuery(undefined, {
@@ -53,8 +57,14 @@ export const Navbar: React.FC = () => {
 
   const [markRead] = useMarkNotificationReadMutation();
   const [markAllRead] = useMarkAllNotificationsReadMutation();
+  const [logoutSession] = useLogoutSessionMutation();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutSession().unwrap();
+    } catch {
+      // Proceed with local session termination even if network logout fails
+    }
     dispatch(logout());
     toast.success("Logged out successfully");
     router.push("/login");
@@ -254,6 +264,16 @@ export const Navbar: React.FC = () => {
 
             <button
               type="button"
+              aria-label="Change account password"
+              onClick={() => setPasswordModalOpen(true)}
+              title="Change password"
+              className="p-2 rounded-full text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950/30 transition"
+            >
+              <KeyRound className="w-5 h-5" />
+            </button>
+
+            <button
+              type="button"
               aria-label="Log out"
               onClick={handleLogout}
               title="Log out"
@@ -264,6 +284,11 @@ export const Navbar: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ChangePasswordModal
+        isOpen={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+      />
     </header>
   );
 };
