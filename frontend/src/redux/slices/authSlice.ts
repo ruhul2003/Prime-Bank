@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User, UserRole } from "@/types";
+import { isTokenExpired } from "@/lib/authUtils";
 
 interface AuthState {
   user: User | null;
   token: string | null;
+  refreshToken: string | null;
   role: UserRole | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -13,6 +15,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   token: null,
+  refreshToken: null,
   role: null,
   isAuthenticated: false,
   isLoading: false,
@@ -25,10 +28,13 @@ export const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; token: string }>
+      action: PayloadAction<{ user: User; token: string; refreshToken?: string }>
     ) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      if (action.payload.refreshToken !== undefined) {
+        state.refreshToken = action.payload.refreshToken;
+      }
       state.role = action.payload.user.role;
       state.isAuthenticated = true;
       state.error = null;
@@ -36,17 +42,22 @@ export const authSlice = createSlice({
       if (typeof window !== "undefined") {
         localStorage.setItem("primebank_token", action.payload.token);
         localStorage.setItem("primebank_user", JSON.stringify(action.payload.user));
+        if (action.payload.refreshToken) {
+          localStorage.setItem("primebank_refresh_token", action.payload.refreshToken);
+        }
       }
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.refreshToken = null;
       state.role = null;
       state.isAuthenticated = false;
       state.error = null;
 
       if (typeof window !== "undefined") {
         localStorage.removeItem("primebank_token");
+        localStorage.removeItem("primebank_refresh_token");
         localStorage.removeItem("primebank_user");
       }
     },
@@ -61,16 +72,25 @@ export const authSlice = createSlice({
     restoreSession: (state) => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("primebank_token");
+        const refreshToken = localStorage.getItem("primebank_refresh_token");
         const userStr = localStorage.getItem("primebank_user");
         if (token && userStr) {
+          if (isTokenExpired(token) && (!refreshToken || isTokenExpired(refreshToken))) {
+            localStorage.removeItem("primebank_token");
+            localStorage.removeItem("primebank_refresh_token");
+            localStorage.removeItem("primebank_user");
+            return;
+          }
           try {
             const user = JSON.parse(userStr);
             state.token = token;
+            state.refreshToken = refreshToken;
             state.user = user;
             state.role = user.role;
             state.isAuthenticated = true;
           } catch {
             localStorage.removeItem("primebank_token");
+            localStorage.removeItem("primebank_refresh_token");
             localStorage.removeItem("primebank_user");
           }
         }
