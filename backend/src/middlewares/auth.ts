@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import { User, IUser } from "../models/User";
+import { verifyAuthToken } from "../utils/tokenManager";
 
 export interface AuthRequest extends Request {
   user?: IUser;
 }
 
 /**
- * Verifies the Bearer JWT and attaches the active user record to the request.
+ * Verifies the Bearer JWT, token freshness, and attaches the active user record to the request.
  */
 export const authenticate = async (
   req: AuthRequest,
@@ -22,14 +22,28 @@ export const authenticate = async (
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "super_secret_prime_bank_jwt_token_key_secure_2025_banking_production"
-    ) as { id: string; role: string };
+    const decoded = verifyAuthToken(token);
+
+    if (decoded.type && decoded.type !== "access") {
+      res.status(401).json({ success: false, message: "Invalid token type for API access." });
+      return;
+    }
 
     const user = await User.findById(decoded.id).select("-password");
     if (!user) {
       res.status(401).json({ success: false, message: "User account no longer exists." });
+      return;
+    }
+
+    if (
+      user.passwordChangedAt &&
+      decoded.iat &&
+      decoded.iat * 1000 < user.passwordChangedAt.getTime()
+    ) {
+      res.status(401).json({
+        success: false,
+        message: "Session expired after password change. Please log in again.",
+      });
       return;
     }
 
