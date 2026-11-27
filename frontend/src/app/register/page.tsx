@@ -1,18 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { useRegisterMutation } from "@/redux/api/apiSlice";
-import { Building2, Lock, Mail, User, Phone, MapPin, ArrowRight, ShieldCheck } from "lucide-react";
+import { Building2, Mail, User, Phone, MapPin, ArrowRight, ShieldCheck } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { getDashboardPathForRole } from "@/lib/authUtils";
 
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,25 +30,47 @@ export default function RegisterPage() {
 
   const [registerMutation, { isLoading }] = useRegisterMutation();
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      router.replace(getDashboardPathForRole(user.role));
+    }
+  }, [isAuthenticated, user, router]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password) {
       toast.error("Please fill in all mandatory fields.");
       return;
     }
 
-    if (formData.transactionPin.length < 4 || formData.transactionPin.length > 6) {
-      toast.error("Transaction PIN must be 4 to 6 digits.");
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (!/^[0-9]{4,6}$/.test(formData.transactionPin.trim())) {
+      toast.error("Transaction PIN must be 4 to 6 numeric digits.");
       return;
     }
 
     try {
-      const res = await registerMutation(formData).unwrap();
-      dispatch(setCredentials({ user: res.user, token: res.token }));
+      const res = await registerMutation({
+        ...formData,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        transactionPin: formData.transactionPin.trim(),
+      }).unwrap();
+      dispatch(
+        setCredentials({
+          user: res.user,
+          token: res.token,
+          refreshToken: res.refreshToken,
+        })
+      );
       toast.success("Account created successfully! Welcome to PrimeBank.");
       router.push("/dashboard/customer");
     } catch (err: any) {
@@ -160,19 +185,17 @@ export default function RegisterPage() {
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
                 Account Password
               </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="password"
-                  name="password"
-                  autoComplete="new-password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Min 6 characters"
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-              </div>
+              <PasswordInput
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Min 6 characters"
+                required
+                autoComplete="new-password"
+                showStrength
+                iconSize="sm"
+                className="border-slate-200 bg-slate-50 dark:bg-slate-950"
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
