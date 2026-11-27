@@ -8,6 +8,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { ReceiptModal } from "@/components/ui/ReceiptModal";
 import { useAppDispatch } from "@/redux/store";
 import { setReceiptModalOpen } from "@/redux/slices/transactionSlice";
+import { getDashboardPathForRole, isTokenExpired } from "@/lib/authUtils";
 import { motion } from "framer-motion";
 
 export default function DashboardLayout({
@@ -31,11 +32,26 @@ export default function DashboardLayout({
   useEffect(() => {
     if (mounted) {
       const token = localStorage.getItem("primebank_token");
+      const refreshToken = localStorage.getItem("primebank_refresh_token");
       if (!token && !isAuthenticated) {
         router.push("/login");
+        return;
+      }
+      if (isTokenExpired(token) && (!refreshToken || isTokenExpired(refreshToken))) {
+        router.push("/login");
+        return;
+      }
+      if (user) {
+        if (pathname.startsWith("/dashboard/admin") && user.role !== "admin") {
+          router.replace(getDashboardPathForRole(user.role));
+        } else if (pathname.startsWith("/dashboard/staff") && user.role !== "staff") {
+          router.replace(getDashboardPathForRole(user.role));
+        } else if (pathname.startsWith("/dashboard/customer") && user.role !== "customer") {
+          router.replace(getDashboardPathForRole(user.role));
+        }
       }
     }
-  }, [mounted, isAuthenticated, router]);
+  }, [mounted, isAuthenticated, user, pathname, router]);
 
   if (!mounted) {
     return (
