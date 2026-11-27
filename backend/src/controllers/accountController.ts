@@ -192,8 +192,8 @@ export const updatePin = async (req: AuthRequest, res: Response): Promise<void> 
   const { accountId, currentPin, newPin } = req.body;
   if (!req.user) throw new AppError("Unauthorized", 401);
 
-  if (!newPin || newPin.length < 4 || newPin.length > 6) {
-    throw new AppError("PIN must be 4 to 6 digits.", 400);
+  if (!newPin || !/^[0-9]{4,6}$/.test(String(newPin).trim())) {
+    throw new AppError("PIN must be 4 to 6 numeric digits.", 400);
   }
 
   const account = await Account.findById(accountId);
@@ -210,15 +210,25 @@ export const updatePin = async (req: AuthRequest, res: Response): Promise<void> 
     }
   }
 
-  account.transactionPin = newPin;
+  account.transactionPin = String(newPin).trim();
   await account.save();
 
-  await Notification.create({
-    userId: account.userId,
-    title: "Transaction PIN Changed",
-    message: `The security PIN for account ${account.accountNumber} was updated successfully.`,
-    type: "security",
-  });
+  await Promise.all([
+    Notification.create({
+      userId: account.userId,
+      title: "Transaction PIN Changed",
+      message: `The security PIN for account ${account.accountNumber} was updated successfully.`,
+      type: "security",
+    }),
+    AuditLog.create({
+      action: "ACCOUNT_PIN_UPDATED",
+      performedBy: req.user._id,
+      targetType: "Account",
+      targetId: account._id.toString(),
+      details: { accountNumber: account.accountNumber },
+      ipAddress: req.ip,
+    }),
+  ]);
 
   res.status(200).json({
     success: true,
