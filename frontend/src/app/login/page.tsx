@@ -1,42 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { useLoginMutation } from "@/redux/api/apiSlice";
-import { Building2, Lock, Mail, ArrowRight } from "lucide-react";
+import { Building2, Mail, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { getDashboardPathForRole } from "@/lib/authUtils";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [loginMutation, { isLoading }] = useLoginMutation();
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      router.replace(getDashboardPathForRole(user.role));
+    }
+  }, [isAuthenticated, user, router]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password) {
       toast.error("Please fill in both email and password.");
       return;
     }
 
     try {
-      const res = await loginMutation({ email, password }).unwrap();
-      dispatch(setCredentials({ user: res.user, token: res.token }));
+      const res = await loginMutation({ email: trimmedEmail, password }).unwrap();
+      dispatch(
+        setCredentials({
+          user: res.user,
+          token: res.token,
+          refreshToken: res.refreshToken,
+        })
+      );
       toast.success(`Welcome back, ${res.user.name}!`);
-
-      if (res.user.role === "admin") {
-        router.push("/dashboard/admin");
-      } else if (res.user.role === "staff") {
-        router.push("/dashboard/staff");
-      } else {
-        router.push("/dashboard/customer");
-      }
+      router.push(getDashboardPathForRole(res.user.role));
     } catch (err: any) {
       toast.error(err?.data?.message || "Invalid email or password.");
     }
@@ -89,18 +98,12 @@ export default function LoginPage() {
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
                 Password
               </label>
-              <div className="relative">
-                <Lock className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  required
-                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-brand-100 dark:border-slate-800 bg-[#f7fbff] dark:bg-navy-950 text-slate-900 dark:text-white placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition"
-                />
-              </div>
+              <PasswordInput
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
             </div>
 
             <button
