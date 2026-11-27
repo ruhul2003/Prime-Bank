@@ -47,11 +47,15 @@ export default function CustomerAccountsPage() {
 
   const handleOpenAccountSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!/^[0-9]{4,6}$/.test(newAccPin.trim())) {
+      toast.error("Transaction PIN must be 4 to 6 numeric digits.");
+      return;
+    }
     try {
       await createAccountMutation({
         accountType: newAccType,
         initialDeposit: Number(newAccDeposit),
-        transactionPin: newAccPin,
+        transactionPin: newAccPin.trim(),
       }).unwrap();
       toast.success(`New ${newAccType.toUpperCase()} Account successfully created!`);
       setIsOpenNewModal(false);
@@ -64,15 +68,15 @@ export default function CustomerAccountsPage() {
   const handleUpdatePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pinModalAccount) return;
-    if (newPin.length < 4 || newPin.length > 6) {
-      toast.error("New PIN must be 4 to 6 digits.");
+    if (!/^[0-9]{4,6}$/.test(newPin.trim())) {
+      toast.error("New PIN must be 4 to 6 numeric digits.");
       return;
     }
     try {
       await updatePinMutation({
         accountId: pinModalAccount._id,
-        currentPin,
-        newPin,
+        currentPin: currentPin.trim(),
+        newPin: newPin.trim(),
       }).unwrap();
       toast.success("Transaction PIN updated successfully.");
       setPinModalAccount(null);
@@ -242,6 +246,8 @@ export default function CustomerAccountsPage() {
             </label>
             <input
               type="password"
+              inputMode="numeric"
+              autoComplete="off"
               maxLength={6}
               value={newAccPin}
               onChange={(e) => setNewAccPin(e.target.value)}
@@ -284,6 +290,8 @@ export default function CustomerAccountsPage() {
             </label>
             <input
               type="password"
+              inputMode="numeric"
+              autoComplete="off"
               required
               maxLength={6}
               value={currentPin}
@@ -299,6 +307,8 @@ export default function CustomerAccountsPage() {
             </label>
             <input
               type="password"
+              inputMode="numeric"
+              autoComplete="off"
               required
               maxLength={6}
               value={newPin}
