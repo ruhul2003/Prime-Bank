@@ -13,7 +13,16 @@ export interface User {
   isVerified: boolean;
   avatar?: string;
   twoFactorEnabled?: boolean;
+  lastLoginAt?: string;
   createdAt?: string;
+}
+
+export interface AuthSessionResponse {
+  success: boolean;
+  message: string;
+  token: string;
+  refreshToken?: string;
+  user: User;
 }
 
 export type AccountType = "savings" | "current" | "business";
