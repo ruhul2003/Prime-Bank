@@ -7,5 +7,9 @@ export function configureSecurityHeaders(req: Request, res: Response, next: Next
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  if (req.path.startsWith('/api/auth')) {
+    res.setHeader('Cache-Control', 'no-store');
+  }
   next();
 }
