@@ -1,4 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
 import {
   User,
   BankAccount,
@@ -10,21 +16,77 @@ import {
   CustomerAnalytics,
 } from "@/types";
 
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
+  prepareHeaders: (headers, { getState }) => {
+    let token = (getState() as any).auth?.token;
+    if (!token && typeof window !== "undefined") {
+      token = localStorage.getItem("primebank_token");
+    }
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  let result = await rawBaseQuery(args, api, extraOptions);
+  const url = typeof args === "string" ? args : args.url;
+
+  if (
+    result.error?.status === 401 &&
+    !url.startsWith("/auth/login") &&
+    !url.startsWith("/auth/register") &&
+    !url.startsWith("/auth/refresh")
+  ) {
+    const state = api.getState() as any;
+    const refreshToken =
+      state.auth?.refreshToken ||
+      (typeof window !== "undefined" ? localStorage.getItem("primebank_refresh_token") : null);
+
+    if (refreshToken) {
+      const refreshResult = await rawBaseQuery(
+        {
+          url: "/auth/refresh",
+          method: "POST",
+          body: { refreshToken },
+        },
+        api,
+        extraOptions
+      );
+
+      const refreshData = refreshResult.data as
+        | { success?: boolean; token?: string; refreshToken?: string }
+        | undefined;
+
+      if (refreshData?.token && state.auth?.user) {
+        api.dispatch({
+          type: "auth/setCredentials",
+          payload: {
+            user: state.auth.user,
+            token: refreshData.token,
+            refreshToken: refreshData.refreshToken || refreshToken,
+          },
+        });
+        result = await rawBaseQuery(args, api, extraOptions);
+        return result;
+      }
+    }
+
+    api.dispatch({ type: "auth/logout" });
+  }
+
+  return result;
+};
+
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
-    prepareHeaders: (headers, { getState }) => {
-      let token = (getState() as any).auth?.token;
-      if (!token && typeof window !== "undefined") {
-        token = localStorage.getItem("primebank_token");
-      }
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: [
     "Auth",
     "Account",
@@ -38,7 +100,7 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     // AUTH ENDPOINTS
     login: builder.mutation<
-      { success: boolean; message: string; token: string; user: User },
+      { success: boolean; message: string; token: string; refreshToken?: string; user: User },
       { email: string; password: string }
     >({
       query: (credentials) => ({
@@ -49,7 +111,7 @@ export const apiSlice = createApi({
       invalidatesTags: ["Auth", "Account", "Transaction", "Analytics", "Notification"],
     }),
     register: builder.mutation<
-      { success: boolean; message: string; token: string; user: User; primaryAccount: BankAccount },
+      { success: boolean; message: string; token: string; refreshToken?: string; user: User; primaryAccount: BankAccount },
       any
     >({
       query: (data) => ({
@@ -58,6 +120,22 @@ export const apiSlice = createApi({
         body: data,
       }),
       invalidatesTags: ["Auth", "Account"],
+    }),
+    refreshSession: builder.mutation<
+      { success: boolean; message: string; token: string; refreshToken: string },
+      { refreshToken: string }
+    >({
+      query: (body) => ({
+        url: "/auth/refresh",
+        method: "POST",
+        body,
+      }),
+    }),
+    logoutSession: builder.mutation<{ success: boolean; message: string }, void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
     }),
     getMe: builder.query<{ success: boolean; user: User }, void>({
       query: () => "/auth/me",
@@ -71,7 +149,10 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["Auth"],
     }),
-    changePassword: builder.mutation<{ success: boolean; message: string }, any>({
+    changePassword: builder.mutation<
+      { success: boolean; message: string; token?: string; refreshToken?: string },
+      { currentPassword: string; newPassword: string }
+    >({
       query: (data) => ({
         url: "/auth/change-password",
         method: "PUT",
@@ -391,6 +472,8 @@ export const apiSlice = createApi({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useRefreshSessionMutation,
+  useLogoutSessionMutation,
   useGetMeQuery,
   useUpdateProfileMutation,
   useChangePasswordMutation,
