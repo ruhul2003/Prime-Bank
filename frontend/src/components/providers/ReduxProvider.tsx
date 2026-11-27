@@ -3,7 +3,7 @@
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
 import { useEffect } from "react";
-import { restoreSession } from "@/redux/slices/authSlice";
+import { restoreSession, logout } from "@/redux/slices/authSlice";
 import { setTheme } from "@/redux/slices/uiSlice";
 import { Toaster } from "react-hot-toast";
 import { MotionConfig } from "framer-motion";
@@ -16,6 +16,15 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("primebank_theme");
     const savedTheme = localStorage.getItem("primebank_ui_theme") as "light" | "dark" | null;
     store.dispatch(setTheme(savedTheme === "dark" ? "dark" : "light"));
+
+    const handleStorageSync = (event: StorageEvent) => {
+      if (event.key === "primebank_token" && !event.newValue) {
+        store.dispatch(logout());
+      }
+    };
+
+    window.addEventListener("storage", handleStorageSync);
+    return () => window.removeEventListener("storage", handleStorageSync);
   }, []);
 
   return (
